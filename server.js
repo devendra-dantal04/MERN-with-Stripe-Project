@@ -8,7 +8,7 @@ const flash = require("express-flash");
 const MongoDBStore = require('connect-mongo');
 require("dotenv").config();
 const passport = require("passport");
-const guest = require("./app/http/middleware/guest");
+
 
 
 const app = express();
