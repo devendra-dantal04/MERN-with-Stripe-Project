@@ -8,7 +8,7 @@ const flash = require("express-flash");
 const MongoDBStore = require('connect-mongo');
 require("dotenv").config();
 const passport = require("passport");
-
+const emitter = require('events');
 
 
 const app = express();
@@ -45,6 +45,11 @@ let mongoStore = new MongoDBStore({
   mongoUrl : url,
   collectionName : "sessions"
 })
+
+//Event Emitter
+
+const eventEmitter = new emitter();
+app.set('eventEmitter', eventEmitter);
 
 //Session config
 app.use(session({
@@ -83,6 +88,27 @@ require('./routes/web')(app);
 
 
 
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
     console.log(`Server running on ${PORT}`);
+})
+
+const io = require('socket.io')(server);
+
+io.on('connection', (socket) => {
+  // Join
+  // console.log(socket.id)
+
+  socket.on('join', (roomName) => {
+    // console.log(roomName)
+    socket.join(roomName)
+  })
+})
+
+eventEmitter.on("orderUpdated", (data) => {
+  io.to(`order_${data.id}`).emit('orderUpdated', data)
+  // console.log(data)
+})
+
+eventEmitter.on('orderPlaced', (data)=> {
+  io.to('adminRoom').emit('orderPlaced', data)
 })
