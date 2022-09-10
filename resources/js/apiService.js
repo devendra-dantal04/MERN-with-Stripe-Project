@@ -23,7 +23,7 @@ export function placeOrder(formObject) {
             progressBar : false
         }).show()
 
-        console.log("I am nothing")
+        console.log("Something Went Wrong.")
 
         window.location.href = '/cart'
     })

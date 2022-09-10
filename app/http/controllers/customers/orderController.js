@@ -1,6 +1,7 @@
 const Order = require("../../../models/order");
 const moment = require("moment");
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+const axios = require("axios");
 
 
 function orderController () {
@@ -39,12 +40,22 @@ function orderController () {
                             },
                           });
 
+                          //Customer 
+                        //   const customer = await stripe.customers.create({
+                        //     name : `${req.user.name}`,
+                        //     email : `${req.user.email}`,
+                        //     phone : phone,
+                        //     source : stripeToken
+                        //   })
+                        // console.log(req.user);
+                        // console.log(req.session.cart)
 
 
                           //Payment Intent
                           
                         stripe.paymentIntents.create({
                             amount : req.session.cart.totalPrice * 100,
+                            // customer : customer.id,
                             // source : stripeToken,
                             currency : 'inr',
                             payment_method_types : ["card"],
@@ -57,6 +68,7 @@ function orderController () {
                             description : `Order Id : ${data._id}`,
                         }).then((payment_intent) => {
                             data.paymentStatus = true;
+                            data.paymentType = paymentType;
                             data.save().then( async (ord)=> {
                                 
                                 //Emit
@@ -73,20 +85,20 @@ function orderController () {
                                 );
 
                                 
-                          return res.json({message : "Payment successful, Successfuly order placed"});
+                                // res.redirect(paymentIntent.next_action.redirect_to_url.url);
+                                var url = paymentIntent.next_action.use_stripe_sdk.stripe_js;
 
-
-                                // const paymentIntentCapture = await stripe.paymentIntents.capture(
-                                //     payment_intent.id
-                                // )
-
+                                const response = await axios.get(url);
+                                    
+                                return res.json({message : "Payment successful, Successfuly order placed"});
                                 
                             }).catch(err => {
+                                delete req.session.cart
                                 console.log(err)
                             })
 
                         }).catch(err => {
-                            console.log("I am here 2")
+                            delete req.session.cart
                             console.log(err)
                             return res.json({message : "Payment failed, you can pay at delivery time"});
                         })
@@ -107,7 +119,8 @@ function orderController () {
 
             }).catch(err => {
                 // req.flash('error', 'Something went wrong');
-                return res.json({message : "Something went wrong"});
+                delete req.session.cart
+                return res.status(500).json({message : "Something went wrong"});
                 // return res.redirect('/cart');
             })
         },
