@@ -2,6 +2,7 @@ import axios from "axios";
 import moment from "moment";
 import Noty from "noty";
 import {initAdmin} from "./admin";
+import {initStripe} from "./stripe";
 
 let addToCart = document.querySelectorAll(".add-to-cart");
 let cartCounter = document.getElementById("cartCounter");
@@ -9,7 +10,6 @@ let cartCounter = document.getElementById("cartCounter");
 const updateCart = (pizza) => {
     axios.post("/update-cart", pizza).then(
         res => {
-            console.log(res);
             // console.log(cartCounter)
             cartCounter.innerText = res.data.totalQty;
 
@@ -95,10 +95,15 @@ function updateStatus(order) {
 updateStatus(order);
 
 
+initStripe();
+
+
+
+
+
 //Socket
 
 let socket = io();
-initAdmin(socket);
 
 
 if(order) {
@@ -108,6 +113,8 @@ if(order) {
 
 let adminAreaPath = window.location.pathname;
 if(adminAreaPath.includes('admin')) {
+    initAdmin(socket);
+
     socket.emit('join', 'adminRoom')
 }
 

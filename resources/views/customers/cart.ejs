@@ -2,7 +2,7 @@
 
     <% if(session.cart) { %>
 
-    <div class="order container mx-auto w-1/2">
+    <div class="order container mx-auto px-4 xl:w-1/2">
         <div class="flex items-center border-b border-gray-300 pb-4">
             <img src="/img/cart-black.png" alt="cart">
             <h1 class="font-bold ml-4 text-2xl">Order Summary</h1>
@@ -33,9 +33,33 @@
 
             <% if(user) { %>
             <div>
-                <form action="/orders" method="post" class="mt-12">
+                <form action="/orders" method="post" class="mt-12" id="payment-form">
+                    <select name="paymentType" id="paymentType" class="form-select form-select-sm
+                    appearance-none
+                    block
+                    w-1/2
+                    mb-4
+                    px-2
+                    py-2
+                    ml-auto
+                    text-sm
+                    font-normal
+                    text-gray-700
+                    bg-white bg-clip-padding bg-no-repeat
+                    border border-solid border-gray-300
+                    rounded
+                    transition
+                    ease-in-out
+                    m-0
+                    focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none" aria-label=".form-select-sm example">
+                
+                      <option value="COD">Cash on delivery</option>
+                      <option value="card">Pay with card</option>
+                      
+                    </select>
                     <input type="text" name="phone" class="border border-gray-400 p-2 w-1/2 mb-4" placeholder="Phone Number">
                     <input type="text" name="address" class="border border-gray-400 p-2 w-1/2" placeholder="Address">
+                    <div id="card-element" class="mt-4"></div>
                     <div>
                         <button type="submit" class="btn-primary bg-orange-500 px-6 py-2 rounded-full text-white font-bold mt-6">Order Now</button>
                     </div>
