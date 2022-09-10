@@ -32,12 +32,16 @@ function orderController () {
                         const paymentMethod = await stripe.paymentMethods.create({
                             type: 'card',
                             card: {
-                              number: '4000000000003220',
+                              number: '4242424242424242',
                               exp_month: 9,
                               exp_year: 2023,
                               cvc: '314',
                             },
                           });
+
+
+
+                          //Payment Intent
                           
                         stripe.paymentIntents.create({
                             amount : req.session.cart.totalPrice * 100,
@@ -45,7 +49,7 @@ function orderController () {
                             currency : 'inr',
                             payment_method_types : ["card"],
                             payment_method : paymentMethod.id,
-                            statement_descriptor : `Pizza Order Succeful`,
+                            statement_descriptor : `Pizza Order Successful`,
                             metadata : {
                                 order_id : `${data._id}`,
                                 user_id : `${req.user._id}`
@@ -68,12 +72,15 @@ function orderController () {
                                     {payment_method: paymentMethod.id}
                                 );
 
+                                
+                          return res.json({message : "Payment successful, Successfuly order placed"});
+
 
                                 // const paymentIntentCapture = await stripe.paymentIntents.capture(
                                 //     payment_intent.id
                                 // )
 
-                                return res.json({message : "Payment successful, Successfuly order placed"});
+                                
                             }).catch(err => {
                                 console.log(err)
                             })

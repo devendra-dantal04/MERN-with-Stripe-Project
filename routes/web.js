@@ -4,6 +4,7 @@ const customerController = require('../app/http/controllers/customers/cartContro
 const orderController = require('../app/http/controllers/customers/orderController');
 const adminOrderController = require('../app/http/controllers/admin/adminOrderController');
 const orderStatusController = require('../app/http/controllers/admin/orderStatusController');
+const checkoutController = require('../app/http/controllers/checkout/checkoutController');
 const guest = require("../app/http/middleware/guest");
 const auth = require("../app/http/middleware/auth");
 const admin = require("../app/http/middleware/admin");
@@ -43,6 +44,10 @@ function initRoutes(app) {
     app.get('/admin/orders', admin, adminOrderController().index);
 
     app.post('/admin/order/status', admin, orderStatusController().update);
+
+    //checkout
+    app.get('/checkout/success', auth, checkoutController().success);
+    app.get('/checkout/failure', auth, checkoutController().failure);
 
 }
 
